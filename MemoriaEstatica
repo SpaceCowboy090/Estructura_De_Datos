@@ -1,0 +1,14 @@
+from tkinter import simpledialog
+from tkinter import messagebox
+
+def main():
+    calificaciones = [0] * 5
+
+    for i in range(5):
+        calificaciones[i] = int(simpledialog.askstring("Captura de calificación", f"Captura la calificación {i + 1}:"))
+
+    for i in range(5):
+        messagebox.showinfo("Calificaciones", f"Calificación {i + 1}: {calificaciones[i]}")
+
+if __name__ == "__main__":
+    main()
