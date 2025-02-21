@@ -1,0 +1,9 @@
+def factorial_interactivo(n):
+    resultado = 1
+    for i in range(1, n + 1):
+        resultado *= i
+    return resultado
+
+
+n = int(input("Ingrese un número para calcular su factorial (interactivo): "))
+print(f"El factorial de {n} es: {factorial_interactivo(n)}")
