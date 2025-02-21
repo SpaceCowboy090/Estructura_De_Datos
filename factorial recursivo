@@ -1,0 +1,8 @@
+def factorial_recursivo(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial_recursivo(n - 1)
+
+n = int(input("Ingrese un número para calcular su factorial (recursivo): "))
+print(f"El factorial de {n} es: {factorial_recursivo(n)}")
