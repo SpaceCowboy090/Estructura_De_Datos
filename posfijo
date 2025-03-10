@@ -1,0 +1,50 @@
+class Pila:
+    def __init__(self):
+        self.items = []
+
+    def esta_vacia(self):
+        return self.items == []
+
+    def apilar(self, item):
+        self.items.append(item)
+
+    def desapilar(self):
+        return self.items.pop()
+
+    def inspeccionar(self):
+        return self.items[-1]
+
+    def tamano(self):
+        return len(self.items)
+
+def evaluar_expresion_posfija(expresion):
+    pila = Pila()
+    tokens = expresion.split()
+
+    for token in tokens:
+        if token.isdigit():
+            pila.apilar(int(token))
+        else:
+            operando2 = pila.desapilar()
+            operando1 = pila.desapilar()
+            resultado = realizar_operacion(token, operando1, operando2)
+            pila.apilar(resultado)
+
+    return pila.desapilar()
+
+def realizar_operacion(operador, operando1, operando2):
+    if operador == '+':
+        return operando1 + operando2
+    elif operador == '-':
+        return operando1 - operando2
+    elif operador == '*':
+        return operando1 * operando2
+    elif operador == '/':
+        return operando1 / operando2
+    else:
+        raise ValueError("Operador no válido")
+
+
+expresion = "3 4 + 2 *"
+resultado = evaluar_expresion_posfija(expresion)
+print(f"El resultado de la expresión '{expresion}' es: {resultado}")
