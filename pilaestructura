@@ -1,0 +1,56 @@
+class Pila:
+    def __init__(self, capacidad):
+        self.capacidad = capacidad
+        self.pila = []
+        self.tope = 0
+
+    def insertar(self, elemento):
+        if self.tope < self.capacidad:
+            self.pila.append(elemento)
+            self.tope += 1
+        else:
+            print("Error: Desbordamiento (overflow)")
+
+    def eliminar(self):
+        if self.tope > 0:
+            self.pila.pop()
+            self.tope -= 1
+        else:
+            print("Error: Subdesbordamiento (underflow)")
+
+    def mostrar_pila(self):
+        print(f"Pila: {self.pila}, TOPE: {self.tope}")
+
+
+pila = Pila(8)
+
+
+pila.insertar('X')  
+pila.mostrar_pila()
+
+pila.insertar('Y')  
+pila.mostrar_pila()
+
+pila.eliminar()  
+pila.mostrar_pila()
+
+pila.eliminar()  
+pila.mostrar_pila()
+
+pila.eliminar()  
+pila.mostrar_pila()
+
+pila.insertar('V')  
+pila.mostrar_pila()
+
+pila.insertar('W')  
+pila.mostrar_pila()
+
+pila.eliminar()  
+pila.mostrar_pila() 
+
+pila.insertar('R')  
+pila.mostrar_pila()
+
+
+print(f"La pila quedó con {pila.tope} elementos.")
