@@ -1,0 +1,88 @@
+import tkinter as tk
+
+class Pila:
+    def __init__(self):
+        self.items = []
+
+    def esta_vacia(self):
+        return len(self.items) == 0
+
+    def apilar(self, item):
+        self.items.append(item)
+
+    def desapilar(self):
+        if not self.esta_vacia():
+            return self.items.pop()
+
+    def inspeccionar(self):
+        if not self.esta_vacia():
+            return self.items[-1]
+
+    def tamano(self):
+        return len(self.items)
+
+WIDTH = 600
+HEIGHT = 300
+NUM_DISCOS = 3
+
+class Torre(Pila):
+    def __init__(self, canvas, x):
+        super().__init__()
+        self.canvas = canvas
+        self.x = x
+        self.rect = canvas.create_rectangle(x - 50, 50, x + 50, 250, fill="gray")
+
+    def actualizar_discos(self):
+        for i, disco in enumerate(self.items):
+            x = self.x
+            y = 250 - (i + 1) * 20
+            self.canvas.coords(disco.rect, x - disco.size, y, x + disco.size, y + 20)
+
+    def puede_apilar(self, disco):
+        return self.esta_vacia() or self.inspeccionar().size > disco.size
+
+class Disco:
+    def __init__(self, canvas, size, torre):
+        self.canvas = canvas
+        self.size = size
+        self.torre = torre
+        self.rect = canvas.create_rectangle(
+            torre.x - size, 230, torre.x + size, 250, fill="red"
+        )
+        self.torre.apilar(self)
+        self.canvas.tag_bind(self.rect, "<ButtonPress-1>", self.iniciar_arrastre)
+        self.canvas.tag_bind(self.rect, "<B1-Motion>", self.arrastrar)
+        self.canvas.tag_bind(self.rect, "<ButtonRelease-1>", self.soltar)
+
+    def iniciar_arrastre(self, event):
+        if self.torre.inspeccionar() == self:
+            self.dx = event.x - self.canvas.coords(self.rect)[0]
+            self.dy = event.y - self.canvas.coords(self.rect)[1]
+            self.canvas.tag_raise(self.rect)
+
+    def arrastrar(self, event):
+        if self.torre.inspeccionar() == self:
+            x1, y1, x2, y2 = self.canvas.coords(self.rect)
+            self.canvas.move(self.rect, event.x - x1 - self.dx, event.y - y1 - self.dy)
+
+    def soltar(self, event):
+        nueva_torre = min(torres, key=lambda t: abs(t.x - event.x))
+        if nueva_torre.puede_apilar(self):
+            self.torre.desapilar()
+            nueva_torre.apilar(self)
+            self.torre = nueva_torre
+        self.torre.actualizar_discos()
+        nueva_torre.actualizar_discos()
+
+root = tk.Tk()
+root.title("Torres de Hanoi")
+
+canvas = tk.Canvas(root, width=WIDTH, height=HEIGHT, bg="white")
+canvas.pack()
+
+torres = [Torre(canvas, 150), Torre(canvas, 300), Torre(canvas, 450)]
+
+for i in range(NUM_DISCOS, 0, -1):
+    Disco(canvas, i * 20, torres[0])
+
+root.mainloop()
