@@ -1,0 +1,65 @@
+class Nodo:
+    def __init__(self, valor):
+        self.valor = valor
+        self.siguiente = None
+
+class Persona:
+    def __init__(self, nombre, edad):
+        self.nombre = nombre
+        self.edad = edad
+
+    def __str__(self):
+        return f"{self.nombre} ({self.edad} años)"
+
+class FilaAntro:
+    def __init__(self):
+        self.frente = None
+        self.final = None
+
+    def esta_vacia(self):
+        return self.frente is None
+
+    def encolar(self, nombre, edad):
+        nueva_persona = Persona(nombre, edad)
+        nuevo_nodo = Nodo(nueva_persona)
+        if self.final is None:
+            self.frente = self.final = nuevo_nodo
+        else:
+            self.final.siguiente = nuevo_nodo
+            self.final = nuevo_nodo
+
+    def desencolar(self):
+        if self.esta_vacia():
+            raise IndexError("La fila está vacía")
+        persona = self.frente.valor
+        self.frente = self.frente.siguiente
+        if self.frente is None:
+            self.final = None
+        return persona
+
+    def ver_frente(self):
+        if self.esta_vacia():
+            raise IndexError("La fila está vacía")
+        return self.frente.valor
+
+    def verificar_edad(self, persona):
+        return persona.edad >= 18
+
+fila_antro = FilaAntro()
+
+fila_antro.encolar("Juan", 20)
+fila_antro.encolar("Ana", 17)
+fila_antro.encolar("Luis", 25)
+fila_antro.encolar("Marta", 16)
+
+print("Personas en la fila:")
+while not fila_antro.esta_vacia():
+    persona = fila_antro.ver_frente()
+    if fila_antro.verificar_edad(persona):
+        print(f"{persona} puede entrar al antro.")
+    else:
+        print(f"{persona} no puede entrar al antro (menor de edad).")
+    fila_antro.desencolar()
+
+if fila_antro.esta_vacia():
+    print("La fila del antro está vacía.")
