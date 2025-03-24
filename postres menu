@@ -1,0 +1,88 @@
+POSTRES = []
+
+def mostrar_menu():
+    print("\n--- Menú Principal ---")
+    print("1. Imprimir ingredientes de un postre")
+    print("2. Insertar nuevos ingredientes a un postre")
+    print("3. Eliminar un ingrediente de un postre")
+    print("4. Dar de alta un postre con sus ingredientes")
+    print("5. Dar de baja un postre con sus ingredientes")
+    print("6. Eliminar elementos repetidos en POSTRES")
+    print("7. Salir")
+
+def imprimir_ingredientes():
+    nombre_postre = input("Ingrese el nombre del postre: ")
+    postres_encontrados = [p for p in POSTRES if p["nombre"] == nombre_postre]
+    if postres_encontrados:
+        for postre in postres_encontrados:
+            print(f"Ingredientes de {postre['nombre']}: {postre['ingredientes']}")
+    else:
+        print(f"No se encontró el postre {nombre_postre}.")
+
+def insertar_ingredientes():
+    nombre_postre = input("Ingrese el nombre del postre: ")
+    postres_encontrados = [p for p in POSTRES if p["nombre"] == nombre_postre]
+    if postres_encontrados:
+        nuevos_ingredientes = input("Ingrese los nuevos ingredientes separados por comas: ").split(",")
+        for postre in postres_encontrados:
+            postre["ingredientes"].extend(nuevos_ingredientes)
+        print(f"Ingredientes añadidos a {nombre_postre}.")
+    else:
+        print(f"No se encontró el postre {nombre_postre}.")
+
+def eliminar_ingrediente():
+    nombre_postre = input("Ingrese el nombre del postre: ")
+    postres_encontrados = [p for p in POSTRES if p["nombre"] == nombre_postre]
+    if postres_encontrados:
+        ingrediente = input("Ingrese el ingrediente a eliminar: ")
+        for postre in postres_encontrados:
+            if ingrediente in postre["ingredientes"]:
+                postre["ingredientes"].remove(ingrediente)
+                print(f"Ingrediente {ingrediente} eliminado de {nombre_postre}.")
+            else:
+                print(f"El ingrediente {ingrediente} no existe en {nombre_postre}.")
+    else:
+        print(f"No se encontró el postre {nombre_postre}.")
+
+def alta_postre():
+    nombre_postre = input("Ingrese el nombre del postre: ")
+    ingredientes = input("Ingrese los ingredientes separados por comas: ").split(",")
+    POSTRES.append({"nombre": nombre_postre, "ingredientes": ingredientes})
+    print(f"Postre {nombre_postre} añadido.")
+
+def baja_postre():
+    nombre_postre = input("Ingrese el nombre del postre: ")
+    global POSTRES
+    POSTRES = [p for p in POSTRES if p["nombre"] != nombre_postre]
+    print(f"Postre {nombre_postre} eliminado.")
+
+def eliminar_repetidos():
+    for postre in POSTRES:
+        postre["ingredientes"] = list(set(postre["ingredientes"]))
+    print("Ingredientes repetidos eliminados.")
+
+def main():
+    while True:
+        mostrar_menu()
+        opcion = input("Seleccione una opción: ")
+        
+        if opcion == "1":
+            imprimir_ingredientes()
+        elif opcion == "2":
+            insertar_ingredientes()
+        elif opcion == "3":
+            eliminar_ingrediente()
+        elif opcion == "4":
+            alta_postre()
+        elif opcion == "5":
+            baja_postre()
+        elif opcion == "6":
+            eliminar_repetidos()
+        elif opcion == "7":
+            print("Saliendo del programa...")
+            break
+        else:
+            print("Opción no válida. Intente de nuevo.")
+
+if __name__ == "__main__":
+    main()
