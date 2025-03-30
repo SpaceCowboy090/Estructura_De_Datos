@@ -1,0 +1,85 @@
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.izq = None
+        self.der = None
+
+class Contacto:
+    def __init__(self, nombre, telefono, email):
+        self.nombre = nombre
+        self.telefono = telefono
+        self.email = email
+    
+    def __str__(self):
+        return f"{self.nombre} | Tel: {self.telefono} | Email: {self.email}"
+
+class AgendaContactos:
+    def __init__(self):
+        self.raiz = None
+    
+    def agregar_contacto(self, contacto):
+        if not self.raiz:
+            self.raiz = Nodo(contacto)
+        else:
+            self._insertar(contacto, self.raiz)
+    
+    def _insertar(self, contacto, nodo):
+        if contacto.nombre < nodo.dato.nombre:
+            if not nodo.izq:
+                nodo.izq = Nodo(contacto)
+            else:
+                self._insertar(contacto, nodo.izq)
+        elif contacto.nombre > nodo.dato.nombre:
+            if not nodo.der:
+                nodo.der = Nodo(contacto)
+            else:
+                self._insertar(contacto, nodo.der)
+    
+    def buscar_contacto(self, nombre):
+        return self._buscar(nombre, self.raiz)
+    
+    def _buscar(self, nombre, nodo):
+        if not nodo: return None
+        if nombre == nodo.dato.nombre: return nodo.dato
+        return self._buscar(nombre, nodo.izq if nombre < nodo.dato.nombre else nodo.der)
+    
+    def mostrar_agenda(self):
+        print("\n--- AGENDA DE CONTACTOS ---")
+        self._inorden(self.raiz)
+    
+    def _inorden(self, nodo):
+        if nodo:
+            self._inorden(nodo.izq)
+            print(nodo.dato)
+            self._inorden(nodo.der)
+    
+    def eliminar_contacto(self, nombre):
+        self.raiz = self._eliminar(nombre, self.raiz)
+    
+    def _eliminar(self, nombre, nodo):
+        if not nodo: return nodo
+        if nombre < nodo.dato.nombre: nodo.izq = self._eliminar(nombre, nodo.izq)
+        elif nombre > nodo.dato.nombre: nodo.der = self._eliminar(nombre, nodo.der)
+        else:
+            if not nodo.izq: return nodo.der
+            if not nodo.der: return nodo.izq
+            temp = self._min(nodo.der)
+            nodo.dato = temp.dato
+            nodo.der = self._eliminar(temp.dato.nombre, nodo.der)
+        return nodo
+    
+    def _min(self, nodo):
+        while nodo.izq: nodo = nodo.izq
+        return nodo
+
+if __name__ == "__main__":
+    agenda = AgendaContactos()
+    agenda.agregar_contacto(Contacto("Ana", "555-1001", "ana@example.com"))
+    agenda.agregar_contacto(Contacto("Carlos", "555-1002", "carlos@example.com"))
+    agenda.agregar_contacto(Contacto("Beatriz", "555-1003", "beatriz@example.com"))
+    
+    agenda.mostrar_agenda()
+    print("\nBuscar a Carlos:", agenda.buscar_contacto("Carlos"))
+    
+    agenda.eliminar_contacto("Beatriz")
+    agenda.mostrar_agenda()
