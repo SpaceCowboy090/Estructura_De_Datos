@@ -1,0 +1,132 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+from itertools import permutations
+
+def crear_grafo():
+    G = nx.Graph()
+    
+    estados = ["CDMX", "Guadalajara", "Monterrey", "Puebla", "Querétaro", "Cancún", "Mérida"]
+    G.add_nodes_from(estados)
+    
+    conexiones = [
+        ("CDMX", "Guadalajara", 540),
+        ("CDMX", "Puebla", 135),
+        ("CDMX", "Querétaro", 220),
+        ("Guadalajara", "Monterrey", 900),
+        ("Guadalajara", "Querétaro", 320),
+        ("Monterrey", "Querétaro", 700),
+        ("Puebla", "Querétaro", 300),
+        ("Puebla", "Cancún", 1300),
+        ("Cancún", "Mérida", 320),
+        ("Mérida", "Monterrey", 1500),
+        ("Mérida", "CDMX", 1300)
+    ]
+    
+    G.add_weighted_edges_from(conexiones)
+    return G
+
+def encontrar_ciclo_hamiltoniano(G):
+    nodes = list(G.nodes())
+    n = len(nodes)
+    
+    for perm in permutations(nodes):
+        if perm[0] != "CDMX":
+            continue
+        valid = True
+        costo = 0
+        for i in range(n):
+            u = perm[i]
+            v = perm[(i+1)%n]
+            if not G.has_edge(u, v):
+                valid = False
+                break
+            costo += G[u][v]['weight']
+        
+        if valid:
+            return perm, costo
+    
+    return None, 0
+
+def encontrar_recorrido_completo(G):
+    nodos_visitados = set()
+    recorrido = []
+    costo_total = 0
+    
+    nodo_actual = "CDMX"
+    nodos_visitados.add(nodo_actual)
+    recorrido.append(nodo_actual)
+    
+    while len(nodos_visitados) < len(G.nodes()):
+        min_costo = float('inf')
+        siguiente_nodo = None
+        origen = None
+        
+        for u in nodos_visitados:
+            for v in G.neighbors(u):
+                if v not in nodos_visitados:
+                    if G[u][v]['weight'] < min_costo:
+                        min_costo = G[u][v]['weight']
+                        siguiente_nodo = v
+                        origen = u
+        
+        if siguiente_nodo is None:
+            for v in G.nodes():
+                if v not in nodos_visitados:
+                    camino = nx.shortest_path(G, source=nodo_actual, target=v, weight='weight')
+                    for i in range(1, len(camino)):
+                        if camino[i] not in nodos_visitados:
+                            nodos_visitados.add(camino[i])
+                            recorrido.append(camino[i])
+                            costo_total += G[camino[i-1]][camino[i]]['weight']
+                    nodo_actual = v
+                    break
+        else:
+            nodos_visitados.add(siguiente_nodo)
+            recorrido.append(siguiente_nodo)
+            costo_total += min_costo
+            nodo_actual = siguiente_nodo
+    
+    return recorrido, costo_total
+
+def dibujar_grafo(G):
+    pos = nx.spring_layout(G, seed=42)
+    plt.figure(figsize=(10, 8))
+    
+    nx.draw_networkx_nodes(G, pos, node_size=2000, node_color='lightblue')
+    nx.draw_networkx_edges(G, pos, width=1, edge_color='gray')
+    
+    nx.draw_networkx_labels(G, pos, font_size=10, font_family='sans-serif')
+    
+    edge_labels = nx.get_edge_attributes(G, 'weight')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+    
+    plt.title("Grafo de Estados Mexicanos y sus Conexiones")
+    plt.axis('off')
+    plt.show()
+
+def main():
+    G = crear_grafo()
+    
+    print("Estados y sus conexiones:")
+    for u, v, data in G.edges(data=True):
+        print(f"{u} <-> {v} (Costo: {data['weight']} km)")
+    
+    print("\nBuscando ciclo hamiltoniano (recorrer todos sin repetir)...")
+    ciclo, costo = encontrar_ciclo_hamiltoniano(G)
+    
+    if ciclo:
+        print("\nCiclo Hamiltoniano encontrado:")
+        print(" -> ".join(ciclo), f"(Costo total: {costo} km)")
+    else:
+        print("\nNo se encontró un ciclo hamiltoniano en este grafo.")
+    
+    print("\nBuscando recorrido que visite todos los estados (puede repetir)...")
+    recorrido, costo_recorrido = encontrar_recorrido_completo(G)
+    
+    print("\nRecorrido completo encontrado:")
+    print(" -> ".join(recorrido), f"(Costo total: {costo_recorrido} km)")
+    
+    dibujar_grafo(G)
+
+if __name__ == "__main__":
+    main()
