@@ -1,0 +1,38 @@
+def floyd_warshall(grafo):
+    nodos = list(grafo.keys())
+    num_nodos = len(nodos)
+    
+    distancias = {nodo: {otro_nodo: float('infinity') for otro_nodo in nodos} for nodo in nodos}
+    
+    for nodo in nodos:
+        distancias[nodo][nodo] = 0
+    
+    for nodo in grafo:
+        for vecino, peso in grafo[nodo].items():
+            distancias[nodo][vecino] = peso
+    
+    for k in nodos:
+        for i in nodos:
+            for j in nodos:
+                if distancias[i][j] > distancias[i][k] + distancias[k][j]:
+                    distancias[i][j] = distancias[i][k] + distancias[k][j]
+    
+    return distancias
+
+
+if __name__ == "__main__":
+    grafo_ejemplo = {
+        'A': {'B': 3, 'C': 8, 'E': -4},
+        'B': {'D': 1, 'E': 7},
+        'C': {'B': 4},
+        'D': {'A': 2, 'C': -5},
+        'E': {'D': 6}
+    }
+    
+    distancias = floyd_warshall(grafo_ejemplo)
+    
+    print("Distancias mínimas entre todos los pares de nodos:")
+    for origen in distancias:
+        print(f"Desde {origen}:")
+        for destino, distancia in distancias[origen].items():
+            print(f"  a {destino}: {distancia if distancia != float('infinity') else 'infinito'}")
