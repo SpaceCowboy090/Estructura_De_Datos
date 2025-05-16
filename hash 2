@@ -1,0 +1,18 @@
+def encontrar_duplicados(lista):
+    elementos_vistos = set()
+    duplicados = set()
+    
+    for elemento in lista:
+        if elemento in elementos_vistos:
+            duplicados.add(elemento)
+        else:
+            elementos_vistos.add(elemento)
+    
+    return list(duplicados)
+
+
+numeros = [1, 2, 3, 2, 4, 5, 4, 6, 7, 8, 7]
+print(encontrar_duplicados(numeros))  
+
+nombres = ["Ana", "Juan", "Ana", "Carlos", "Juan"]
+print(encontrar_duplicados(nombres)) 
