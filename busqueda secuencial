@@ -1,0 +1,32 @@
+def busqueda_secuencial_interactiva():
+    print("=== BÚSQUEDA SECUENCIAL INTERACTIVA ===")
+    print("Este programa busca un valor en una lista desordenada (como calificaciones de estudiantes)")
+    
+ 
+    datos = input("Ingresa los elementos de la lista separados por comas: ").split(',')
+    lista = [int(item.strip()) for item in datos]
+    objetivo = int(input("Ingresa el valor a buscar: "))
+    
+
+    print("\nIniciando búsqueda secuencial...")
+    encontrado = False
+    posiciones = []
+    
+    for i in range(len(lista)):
+        print(f"Comparando {objetivo} con elemento en posición {i}: {lista[i]}")
+        if lista[i] == objetivo:
+            print(f"¡Coincidencia encontrada en posición {i}!")
+            encontrado = True
+            posiciones.append(i)
+    
+
+    print("\n=== RESULTADOS ===")
+    if encontrado:
+        print(f"El valor {objetivo} se encontró en las posiciones: {posiciones}")
+    else:
+        print(f"El valor {objetivo} no se encontró en la lista")
+    
+    print("\nLista completa:", lista)
+
+
+busqueda_secuencial_interactiva()
