@@ -1,0 +1,43 @@
+def busqueda_binaria_interactiva():
+    print("=== BÚSQUEDA BINARIA INTERACTIVA ===")
+    print("Este programa busca un valor en una lista ORDENADA (como IDs de libros)")
+    
+
+    datos = input("Ingresa los elementos de la lista ORDENADA separados por comas: ").split(',')
+    lista = sorted([int(item.strip()) for item in datos])  # Aseguramos que esté ordenada
+    objetivo = int(input("Ingresa el valor a buscar: "))
+    
+  
+    print("\nLista ordenada:", lista)
+    print("Iniciando búsqueda binaria...")
+    
+    izquierda, derecha = 0, len(lista) - 1
+    encontrado = False
+    
+    while izquierda <= derecha:
+        medio = (izquierda + derecha) // 2
+        print(f"\nRango actual: posición {izquierda} a {derecha}")
+        print(f"Elemento central en posición {medio}: {lista[medio]}")
+        
+        if lista[medio] == objetivo:
+            print(f"¡Valor encontrado en posición {medio}!")
+            encontrado = True
+            break
+        elif lista[medio] < objetivo:
+            print(f"{lista[medio]} es menor que {objetivo}, buscando en la mitad derecha")
+            izquierda = medio + 1
+        else:
+            print(f"{lista[medio]} es mayor que {objetivo}, buscando en la mitad izquierda")
+            derecha = medio - 1
+    
+
+    print("\n=== RESULTADOS ===")
+    if encontrado:
+        print(f"El valor {objetivo} se encontró en la posición {medio}")
+    else:
+        print(f"El valor {objetivo} no se encontró en la lista")
+    
+    print("\nLista ordenada:", lista)
+
+
+busqueda_binaria_interactiva()
